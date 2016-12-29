@@ -14,10 +14,20 @@ use Yii;
 class User extends ActiveRecord {
     public $rememberMe = true;
     private $secretkey = 'ssapword2016';
+    const SCENARIO_LOGIN = 'login';
+    const SCENARIO_REGISTER = 'register';
 
     public static function tableName()
     {
         return 'user';
+    }
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[self::SCENARIO_LOGIN] = ['username', 'password'];
+        $scenarios[self::SCENARIO_REGISTER] = ['username', 'password', 'email', 'idcard'];
+        return $scenarios;
     }
 
     public function rules()
@@ -41,6 +51,7 @@ class User extends ActiveRecord {
             'create_time' => '创建时间',
             'create_ip' => '创建IP',
             'status' => '状态',
+            'idcard' => '身份证号',
             'login_count' => '登录次数',
         ];
     }
@@ -81,14 +92,20 @@ class User extends ActiveRecord {
 
     public function regist() {
         if ($this->validate()) {
-            $user = $this->findByUsername();
+            $user = $this->findByUsername($this->username);
             if ($user) {
                 return $this->addError('手机号已注册');
             } else {
                 $idcard = $this->findIdcard();
                 if ($idcard) {
                     return $this->addError('身份证号已被使用');
-                } else {}
+                } else {
+                    $model = new User();
+                    $model->username = $this->username;
+                    $model->password = $this->password;
+                    $model->idcard = Yii::$app->getSecurity()->encryptByPassword($idcard, $this->secretkey);
+                    $model->save();
+                }
             }
         }
     }

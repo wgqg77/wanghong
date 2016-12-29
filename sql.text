@@ -1,1 +1,28 @@
-CREATE
+create table `user` (
+`uid` int(10) unsigned not null auto_increment primary key,
+`mobile` char(12) not null default '' comment '手机号',
+`email` varchar(45) not null default '' comment '邮箱',
+`sex` tinyint(1) not null default 0 comment '性别,0:男,1:女',
+`banknum` char(20) not null default '' comment '银行卡号',
+`bank` varchar(100) not null default '' comment '开户行',
+`password` char(32) not null default '' comment '密码',
+) engine=InnoDB default charset=utf8;
+
+create table `ad` (
+`id` int(10) unsigned not null auto_increment primary key,
+`ad_name` char(12) not null default '' comment '名称',
+`description` varchar(255) not null default '' comment '描述',
+`logo` char(20) not null default '' comment '图标',
+`url` varchar(100) not null default '' comment '链接',
+`price` decimal(4,2) not null default 0 comment '价格',
+`status` tinyint(1) unsigned not null default 0 comment '状态',
+`add_time` int(10) unsigned not null default '' comment '添加时间',
+`end_time` int(10) unsigned not null default '' comment '截止时间',
+) engine=InnoDB default charset=utf8;
+
+create table `account` (
+`id` int(10) unsigned not null auto_increment primary key,
+`uid` int(10) unsigned not null comment '用户id',
+`ad_id` int(10) unsigned not null comment '广告id',
+`add_time` int(10) unsigned not null default '' comment '添加时间',
+) engine=InnoDB default charset=utf8;
